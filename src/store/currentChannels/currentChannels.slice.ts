@@ -44,6 +44,8 @@ export const thunkUpdateChannelById = createAsyncThunk<void, Channel>(
   'currentChannels/updateChannelById',
   async (channel, { rejectWithValue }) => {
     try {
+      console.log(`update strted, text: ${channel.text}`);
+
       await privateInstance.put('channels/updateById', {
         channelId: channel.id,
         isActive: channel.isActive,
@@ -65,7 +67,14 @@ const currentChannelsSlice = createSlice({
       return initialState;
     },
     setText: (state, action) => {
-      state.channels[action.payload.i].text === action.payload.text;
+      state.channels[action.payload.i].text = action.payload.text;
+    },
+    setActive: (state, action) => {
+      state.channels[action.payload.i].isActive = action.payload.isActive;
+    },
+    setInline: (state, action) => {
+      state.channels[action.payload.i].isInlineKeyboard =
+        action.payload.isInline;
     },
   },
   extraReducers: (builder) => {
@@ -90,5 +99,5 @@ const currentChannelsSlice = createSlice({
 });
 
 const { actions, reducer } = currentChannelsSlice;
-export const { resetCurrentChannels, setText } = actions;
+export const { resetCurrentChannels, setText, setActive, setInline } = actions;
 export default reducer;

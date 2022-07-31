@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useAppDispatch } from '../../hooks/redux.hooks';
-import { setText } from '../../store/currentChannels/currentChannels.slice';
-import { Channel } from '../../store/currentChannels/types';
+import {
+  setActive,
+  setInline,
+  setText,
+} from '../../store/currentChannels/currentChannels.slice';
+import { Button, Channel } from '../../store/currentChannels/types';
 import { AddButtonForm } from '../AddButtonForm/AddButtonForm';
 import { ButtonItem } from '../ButtonItem/ButtonItem';
 import { ModalWindow } from '../ModalWindow/ModalWindow';
@@ -12,21 +16,18 @@ interface Props {
   channel: Channel;
 }
 
-enum ChannelTypes {
-  whatsup,
-  vk,
-  telegram,
-  sms,
-}
-
 export const ChannelItem: React.FC<Props> = ({ channel }) => {
   const dispatch = useAppDispatch();
+
+  const [index, setIndex] = useState<number | null>(null);
+
   const [message, setMessage] = useState(channel.text);
   const [isActive, setIsActive] = useState(channel.isActive);
   const [isInlineKeyboard, setIsInlineKeyboard] = useState(
     channel.isInlineKeyboard
   );
   const [buttons, setButtons] = useState(channel.buttons);
+
   const [addButtonIsOpen, setAddButtonIsOpen] = useState<boolean>(false);
 
   const handleAddButton = () => {
@@ -35,15 +36,26 @@ export const ChannelItem: React.FC<Props> = ({ channel }) => {
 
   const handleActiveCheckbox = () => {
     setIsActive(!isActive);
+    dispatch(setActive({ i: index, isActive: !isActive }));
   };
 
   const handleIsInlineKeyboard = () => {
     setIsInlineKeyboard(!isInlineKeyboard);
+    dispatch(setInline({ i: index, isInline: !isInlineKeyboard }));
   };
 
-  // useEffect(() => {
-  //   dispatch(setText({ i: 0, text: message }));
-  // }, [message]);
+  useEffect(() => {
+    if (channel.type === 'whatsup') setIndex(0);
+    if (channel.type === 'vk') setIndex(1);
+    if (channel.type === 'telegram') setIndex(2);
+    if (channel.type === 'sms') setIndex(3);
+  }, [channel]);
+
+  useEffect(() => {
+    if (index) {
+      dispatch(setText({ i: index, text: message }));
+    }
+  }, [message]);
 
   return (
     <>
