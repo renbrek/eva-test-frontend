@@ -1,0 +1,75 @@
+@import 'node_modules/nord/src/sass/nord.scss';
+@import 'src/utils/additionalNordColors.scss';
+
+.container {
+  width: 100%;
+  max-width: 420px;
+  min-height: 400px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  background-color: $nord1;
+  box-shadow: $nord-shadow;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  flex-grow: 1;
+  padding-bottom: 1em;
+}
+
+.label {
+  margin-top: 1rem;
+}
+
+.instructions {
+  font-size: 16px;
+  border-radius: 0.5rem;
+  background: $nord13;
+  color: $nord0;
+  padding: 0.5em;
+  position: relative;
+  bottom: -10px;
+}
+
+.instructions > svg {
+  margin-right: 0.25em;
+}
+
+.submitButton {
+  margin-top: 1rem;
+}
+
+.offscreen {
+  position: absolute;
+  left: -9999px;
+}
+
+.hide {
+  display: none;
+}
+
+.valid {
+  color: $nord14;
+  margin-left: 0.25em;
+}
+
+.invalid {
+  color: $nord11;
+  margin-left: 0.25em;
+}
+
+.errmsg {
+  color: $nord11;
+  font-weight: bold;
+  padding: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+.line {
+  display: inline-block;
+}
