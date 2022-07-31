@@ -1,0 +1,21 @@
+@import 'node_modules/nord/src/sass/nord.scss';
+
+.container {
+  border-radius: 0.5rem;
+  background-color: $nord2;
+  padding: 1em;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.addButton {
+  padding: 10px 20px;
+}
+
+.items {
+  margin-top: 1em;
+}

@@ -1,0 +1,25 @@
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1em;
+  background-color: #2e3440;
+  border-radius: 0.2rem;
+  padding: 0.5em;
+
+  transition: 0.3s;
+
+  cursor: pointer;
+}
+
+.container:hover {
+  background-color: #272d38;
+}
+
+.container:active {
+  background-color: #202530;
+}
+
+.danger {
+  background-color: #bf616a;
+}

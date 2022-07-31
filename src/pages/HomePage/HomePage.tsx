@@ -1,8 +1,10 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Campaigns } from '../../components/Campaigns/Campaigns';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux.hooks';
 import { useAuth } from '../../hooks/useAuth';
 import { thunkLogout } from '../../store/auth/auth.slice';
+import { resetCampaigns } from '../../store/campaigns/campaigns.slice';
 import { resetUser, thunkFetchUser } from '../../store/user/user.slice';
 
 import styles from './HomePage.module.scss';
@@ -19,6 +21,7 @@ export const HomePage: React.FC = () => {
   const handleLogout = () => {
     dispatch(thunkLogout());
     dispatch(resetUser());
+    dispatch(resetCampaigns());
   };
 
   useEffect(() => {
@@ -37,7 +40,9 @@ export const HomePage: React.FC = () => {
           <p>Your ID: {currentUser?.id}</p>
           <button onClick={handleLogout}>Logout</button>
 
-          <div className={styles.content}>Your Campaigns</div>
+          <div className={styles.content}>
+            <Campaigns />
+          </div>
         </div>
       ) : (
         <div className={styles.authButtons}>

@@ -1,0 +1,21 @@
+@import 'node_modules/nord/src/sass/nord.scss';
+
+.container {
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+}
+
+.label {
+  margin-top: 1em;
+}
+
+.submitButton {
+  margin-top: 1em;
+}
+
+.errmsg {
+  color: $nord11;
+}

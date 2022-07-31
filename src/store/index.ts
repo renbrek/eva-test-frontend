@@ -14,11 +14,13 @@ import storage from 'redux-persist/lib/storage';
 import authReducer from './auth/auth.slice';
 import userReducer from './user/user.slice';
 import campaignsReducer from './campaigns/campaigns.slice';
+import currentChannelsReducer from './currentChannels/currentChannels.slice';
 
 const rootReducer = combineReducers({
   auth: authReducer,
   user: userReducer,
   campaigns: campaignsReducer,
+  currentChannels: currentChannelsReducer,
 });
 
 const persistConfig = {
