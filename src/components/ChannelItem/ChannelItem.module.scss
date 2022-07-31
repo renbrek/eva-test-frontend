@@ -1,0 +1,37 @@
+@import 'node_modules/nord/src/sass/nord.scss';
+
+.container {
+  border-radius: 0.5rem;
+  background-color: $nord3;
+  padding: 1em;
+}
+
+.disable {
+  background-color: $nord1;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+
+  margin-bottom: 0.5rem;
+  justify-content: space-between;
+}
+
+.buttonsSection {
+  display: grid;
+  gap: 0.5rem;
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+.button {
+}
+
+.invisible {
+  color: red;
+}
+
+.message {
+  display: flex;
+  flex-direction: column;
+}

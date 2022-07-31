@@ -1,0 +1,22 @@
+@import 'node_modules/nord/src/sass/nord.scss';
+
+.container {
+  cursor: pointer;
+  text-align: center;
+  padding: 0.5em;
+  background-color: $nord1;
+  border-radius: 0.2em;
+  transition: 0.3s;
+}
+
+.container:hover {
+  background-color: #272d38;
+}
+
+.container:active {
+  background-color: #202530;
+}
+
+.linkButton {
+  text-decoration: underline;
+}

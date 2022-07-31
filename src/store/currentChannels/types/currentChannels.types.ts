@@ -10,7 +10,7 @@ export type Channel = {
   buttons: Button[];
 };
 
-type Button = {
+export type Button = {
   id: string;
   createdAd: Date;
   updatedAt: Date;
