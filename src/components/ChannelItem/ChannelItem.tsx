@@ -59,7 +59,6 @@ export const ChannelItem: React.FC<Props> = ({ channel }) => {
 
   return (
     <>
-      {' '}
       <div
         className={
           isActive ? styles.container : `${styles.disable} ${styles.container} `
@@ -67,11 +66,14 @@ export const ChannelItem: React.FC<Props> = ({ channel }) => {
       >
         <div className={styles.header}>
           <h1>{channel.type}</h1>
-          <input
-            type={'checkbox'}
-            checked={isActive}
-            onChange={handleActiveCheckbox}
-          />
+          <div>
+            {isActive ? <>active</> : <>disable</>}{' '} 
+            <input
+              type={'checkbox'}
+              checked={isActive}
+              onChange={handleActiveCheckbox}
+            />
+          </div>
         </div>
 
         <div className={styles.message}>
@@ -109,7 +111,13 @@ export const ChannelItem: React.FC<Props> = ({ channel }) => {
                       : `${styles.button} ${styles.invisible}`
                   }
                 >
-                  <ButtonItem key={button.id} button={button} />
+                  {index && (
+                    <ButtonItem
+                      key={button.id}
+                      button={button}
+                      channelIndex={index}
+                    />
+                  )}
                 </div>
               ))}
             </div>
@@ -117,7 +125,14 @@ export const ChannelItem: React.FC<Props> = ({ channel }) => {
         </div>
       </div>
       <ModalWindow active={addButtonIsOpen} setActive={setAddButtonIsOpen}>
-        <AddButtonForm />
+        {index && (
+          <AddButtonForm
+            campaignId={channel.campaignId}
+            index={index}
+            isInlineButton={isInlineKeyboard}
+            setButtons={setButtons}
+          />
+        )}
       </ModalWindow>
     </>
   );
