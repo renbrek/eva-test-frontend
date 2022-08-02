@@ -89,7 +89,7 @@ export const AddButtonForm: React.FC<Props> = ({
         text.length <= restrictions.standardMaxButtonTextLength) ||
       (!isInlineButton && restrictions.standardMaxButtonTextLength === -1);
 
-    setTextIsValid(isValid);
+    setTextIsValid(isValid && text.length > 0);
   }, [text, isInlineButton]);
 
   return (
