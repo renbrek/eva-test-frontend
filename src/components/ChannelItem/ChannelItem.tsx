@@ -5,7 +5,7 @@ import {
   setInline,
   setText,
 } from '../../store/currentChannels/currentChannels.slice';
-import { Button, Channel } from '../../store/currentChannels/types';
+import { Channel } from '../../store/currentChannels/types';
 import { AddButtonForm } from '../AddButtonForm/AddButtonForm';
 import { ButtonItem } from '../ButtonItem/ButtonItem';
 import { ModalWindow } from '../ModalWindow/ModalWindow';
@@ -14,20 +14,36 @@ import styles from './ChannelItem.module.scss';
 
 interface Props {
   channel: Channel;
+  setIsValid: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export const ChannelItem: React.FC<Props> = ({ channel }) => {
+export const ChannelItem: React.FC<Props> = ({ channel, setIsValid }) => {
   const dispatch = useAppDispatch();
 
   const [index, setIndex] = useState<number | null>(null);
 
-  const [maxMessageLength, setMaxMessageLength] = useState<number>();
+  const [buttonsIsSupported, setButtonsIsSupported] = useState<boolean>(false);
+  const [maxMessageLength, setMaxMessageLength] = useState<number>(0);
+  const [standardMaxButtonsCount, setStandardMaxButtonsCount] =
+    useState<number>(0);
+  const [standardMaxButtonTextLength, setStandardMaxButtonTextLength] =
+    useState<number>(0);
+  const [standardLinksIsSupported, setStandardLinksIsSupported] =
+    useState<boolean>(false);
+  const [inlineMaxButtonsCount, setInlineMaxButtonsCount] = useState<number>(0);
+  const [inlineMaxButtonTextLength, setInlineMaxButtonTextLength] =
+    useState<number>(0);
+  const [inlineLinksIsSupported, setInlineLinksIsSupported] =
+    useState<boolean>(false);
 
-  const [message, setMessage] = useState(channel.text);
   const [isActive, setIsActive] = useState(channel.isActive);
   const [isInlineKeyboard, setIsInlineKeyboard] = useState(
     channel.isInlineKeyboard
   );
+
+  const [message, setMessage] = useState(channel.text);
+  const [messageIsValid, setMessageIsValid] = useState(true);
+
   const [buttons, setButtons] = useState(channel.buttons);
 
   const [addButtonIsOpen, setAddButtonIsOpen] = useState<boolean>(false);
@@ -46,30 +62,75 @@ export const ChannelItem: React.FC<Props> = ({ channel }) => {
     dispatch(setInline({ i: index, isInline: !isInlineKeyboard }));
   };
 
+  const standardButtons = buttons.filter((btn) => !btn.isInlineButton);
+  const inlineButtons = buttons.filter((btn) => btn.isInlineButton);
+
+  const canAddStandardButton =
+    standardMaxButtonsCount === -1 ||
+    standardButtons.length < standardMaxButtonsCount;
+  const canAddInlineButton =
+    inlineMaxButtonsCount === -1 ||
+    inlineButtons.length < inlineMaxButtonsCount;
+
   useEffect(() => {
     if (channel.type === 'whatsup') {
       setIndex(0);
+      setButtonsIsSupported(true);
       setMaxMessageLength(1000);
+      setStandardMaxButtonsCount(10);
+      setStandardMaxButtonTextLength(20);
+      setStandardLinksIsSupported(false);
+      setInlineMaxButtonsCount(3);
+      setInlineMaxButtonTextLength(20);
+      setInlineLinksIsSupported(true);
     }
     if (channel.type === 'vk') {
       setIndex(1);
+      setButtonsIsSupported(true);
       setMaxMessageLength(4096);
+      setStandardMaxButtonsCount(40);
+      setStandardMaxButtonTextLength(-1);
+      setStandardLinksIsSupported(true);
+      setInlineMaxButtonsCount(10);
+      setInlineMaxButtonTextLength(-1);
+      setInlineLinksIsSupported(true);
     }
     if (channel.type === 'telegram') {
       setIndex(2);
+      setButtonsIsSupported(true);
       setMaxMessageLength(4096);
+      setStandardMaxButtonsCount(-1);
+      setStandardMaxButtonTextLength(-1);
+      setStandardLinksIsSupported(false);
+      setInlineMaxButtonsCount(-1);
+      setInlineMaxButtonTextLength(64);
+      setInlineLinksIsSupported(true);
     }
     if (channel.type === 'sms') {
       setIndex(3);
-      setMaxMessageLength(undefined);
+      setButtonsIsSupported(false);
+      setMaxMessageLength(-1);
+      setStandardMaxButtonsCount(0);
+      setStandardMaxButtonTextLength(0);
+      setStandardLinksIsSupported(false);
+      setInlineMaxButtonsCount(0);
+      setInlineMaxButtonTextLength(0);
+      setInlineLinksIsSupported(false);
     }
   }, [channel.type]);
 
   useEffect(() => {
-    if (index) {
+    if (index !== null) {
       dispatch(setText({ i: index, text: message }));
     }
   }, [message]);
+
+  useEffect(() => {
+    const isValid =
+      message.length <= maxMessageLength || maxMessageLength === -1;
+    setMessageIsValid(isValid);
+    setIsValid(isValid);
+  }, [message, maxMessageLength]);
 
   return (
     <>
@@ -98,55 +159,103 @@ export const ChannelItem: React.FC<Props> = ({ channel }) => {
               setMessage(event.currentTarget.value);
             }}
           ></textarea>
-          {message.length}
-          {maxMessageLength && `/${maxMessageLength}`}
+          <div className={!messageIsValid ? styles.danger : styles.empty}>
+            {message.length}
+            {maxMessageLength >= 0 && `/${maxMessageLength}`}
+          </div>
         </div>
 
-        <div>
+        {buttonsIsSupported && (
           <div>
-            Keyboard: {'Inline mod '}
-            <input
-              type="checkbox"
-              checked={isInlineKeyboard}
-              onChange={handleIsInlineKeyboard}
-            />
-          </div>
-          <div>
-            <div className={styles.header}>
-              Buttons
-              <button onClick={handleAddButton}>Add button</button>
+            <div>
+              Keyboard: {'Inline mod '}
+              <input
+                type="checkbox"
+                checked={isInlineKeyboard}
+                onChange={handleIsInlineKeyboard}
+              />
             </div>
-            <div className={styles.buttonsSection}>
-              {buttons.map((button) => (
-                <div
-                  key={button.id}
-                  className={
-                    (isInlineKeyboard && button.isInlineButton) ||
-                    (!isInlineKeyboard && !button.isInlineButton)
-                      ? styles.button
-                      : `${styles.button} ${styles.invisible}`
+            <div>
+              <div className={styles.header}>
+                Buttons
+                <button
+                  onClick={handleAddButton}
+                  disabled={
+                    !(
+                      (!isInlineKeyboard && canAddStandardButton) ||
+                      (isInlineKeyboard && canAddInlineButton)
+                    )
                   }
                 >
-                  {index && (
-                    <ButtonItem
-                      key={button.id}
-                      button={button}
-                      channelIndex={index}
-                    />
-                  )}
+                  Add button
+                </button>
+              </div>
+              {isInlineKeyboard ? (
+                <div className={styles.buttonsSection}>
+                  {inlineButtons.map((button) => (
+                    <div key={button.id} className={styles.button}>
+                      {index !== null && (
+                        <ButtonItem
+                          key={button.id}
+                          button={button}
+                          restrictions={{
+                            standardMaxButtonsCount,
+                            standardMaxButtonTextLength,
+                            standardLinksIsSupported,
+                            inlineMaxButtonsCount,
+                            inlineMaxButtonTextLength,
+                            inlineLinksIsSupported,
+                          }}
+                          channelIndex={index}
+                          setIsValid={setIsValid}
+                        />
+                      )}
+                    </div>
+                  ))}
                 </div>
-              ))}
+              ) : (
+                <div className={styles.buttonsSection}>
+                  {standardButtons.map((button) => (
+                    <div key={button.id} className={styles.button}>
+                      {index !== null && (
+                        <ButtonItem
+                          key={button.id}
+                          button={button}
+                          restrictions={{
+                            standardMaxButtonsCount,
+                            standardMaxButtonTextLength,
+                            standardLinksIsSupported,
+                            inlineMaxButtonsCount,
+                            inlineMaxButtonTextLength,
+                            inlineLinksIsSupported,
+                          }}
+                          channelIndex={index}
+                          setIsValid={setIsValid}
+                        />
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
-        </div>
+        )}
       </div>
       <ModalWindow active={addButtonIsOpen} setActive={setAddButtonIsOpen}>
-        {index && (
+        {index !== null && (
           <AddButtonForm
             campaignId={channel.campaignId}
             index={index}
             isInlineButton={isInlineKeyboard}
             setButtons={setButtons}
+            restrictions={{
+              standardMaxButtonsCount,
+              standardMaxButtonTextLength,
+              standardLinksIsSupported,
+              inlineMaxButtonsCount,
+              inlineMaxButtonTextLength,
+              inlineLinksIsSupported,
+            }}
           />
         )}
       </ModalWindow>

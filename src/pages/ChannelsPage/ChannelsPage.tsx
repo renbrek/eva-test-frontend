@@ -23,6 +23,11 @@ export const ChannelsPage: React.FC = () => {
 
   const [isLoading, setIsLoading] = useState(true);
 
+  const [whatsupIsValid, setWhatsupIsValid] = useState(true);
+  const [vkIsValid, setVkIsValid] = useState(true);
+  const [telegramIsValid, setTelegramIsValid] = useState(true);
+  const [smsIsValid, setSmsIsValid] = useState(true);
+
   const { campaignId } = useParams();
 
   const navigate = useNavigate();
@@ -30,6 +35,9 @@ export const ChannelsPage: React.FC = () => {
   const campaign = useAppSelector((state) =>
     selectCampaignsById(state, campaignId)
   );
+
+  const saveIsActive =
+    whatsupIsValid && vkIsValid && telegramIsValid && smsIsValid;
 
   const currentChannelsState = useAppSelector((state) => state.currentChannels);
 
@@ -82,17 +90,25 @@ export const ChannelsPage: React.FC = () => {
       <div className={styles.channels}>
         <ChannelItem
           channel={currentChannelsState.channels[ChannelTypes.whatsup]}
+          setIsValid={setWhatsupIsValid}
         />
-        <ChannelItem channel={currentChannelsState.channels[ChannelTypes.vk]} />
+        <ChannelItem
+          channel={currentChannelsState.channels[ChannelTypes.vk]}
+          setIsValid={setVkIsValid}
+        />
         <ChannelItem
           channel={currentChannelsState.channels[ChannelTypes.telegram]}
+          setIsValid={setTelegramIsValid}
         />
         <ChannelItem
           channel={currentChannelsState.channels[ChannelTypes.sms]}
+          setIsValid={setSmsIsValid}
         />
       </div>
 
-      <button onClick={handleSave}>Save</button>
+      <button onClick={handleSave} disabled={!saveIsActive}>
+        Save
+      </button>
     </div>
   ) : (
     <div>

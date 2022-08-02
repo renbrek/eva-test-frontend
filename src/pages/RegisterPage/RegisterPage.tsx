@@ -8,20 +8,17 @@ import { EMAIL_REGEX, PWD_REGEX } from '../../utils/regex';
 import styles from './RegisterPage.module.scss';
 
 export const RegisterPage: React.FC = () => {
-  const emailRef = useRef<HTMLInputElement>(null);
-  const errRef = useRef<HTMLParagraphElement>(null);
-
   const [email, setEmail] = useState('');
-  const [isEmailValid, setIsEmailValid] = useState(false);
-  const [isEmailFocus, setIsEmailFocus] = useState(false);
+  const [emailIsValid, setEmailIsValid] = useState(false);
+  const [emailIsFocus, setEmailIsFocus] = useState(false);
 
   const [password, setPassword] = useState('');
-  const [isPasswordValid, setIsPasswordValid] = useState(false);
-  const [isPasswordFocus, setIsPasswordFocus] = useState(false);
+  const [passwordIsValid, setPasswordIsValid] = useState(false);
+  const [passwordIsFocus, setPasswordIsFocus] = useState(false);
 
   const [matchPassword, setMatchPassword] = useState('');
-  const [isMatchValid, setIsMatchValid] = useState(false);
-  const [isMatchFocus, setIsMatchFocus] = useState(false);
+  const [matchIsValid, setMatchIsValid] = useState(false);
+  const [matchIsFocus, setMatchIsFocus] = useState(false);
 
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -50,19 +47,15 @@ export const RegisterPage: React.FC = () => {
   }, [auth.thunks.register.error]);
 
   useEffect(() => {
-    emailRef.current?.focus();
-  }, []);
-
-  useEffect(() => {
     const result = EMAIL_REGEX.test(email);
-    setIsEmailValid(result);
+    setEmailIsValid(result);
   }, [email]);
 
   useEffect(() => {
     const result = PWD_REGEX.test(password);
-    setIsPasswordValid(result);
+    setPasswordIsValid(result);
     const match = password === matchPassword;
-    setIsMatchValid(match);
+    setMatchIsValid(match);
   }, [password, matchPassword]);
 
   useEffect(() => {
@@ -77,42 +70,38 @@ export const RegisterPage: React.FC = () => {
 
   return (
     <section className={styles.container}>
-      <p
-        ref={errRef}
-        className={errorMessage ? styles.errmsg : styles.offscreen}
-      >
+      <p className={errorMessage ? styles.errmsg : styles.offscreen}>
         {errorMessage}
       </p>
       <h1>Sign Up</h1>
       <form className={styles.form} onSubmit={handleSubmit}>
         <label className={styles.label} htmlFor="email">
           Email:
-          <span className={isEmailValid ? styles.valid : styles.hide}>v</span>
+          <span className={emailIsValid ? styles.valid : styles.hide}>V</span>
           <span
-            className={isEmailValid || !email ? styles.hide : styles.invalid}
+            className={emailIsValid || !email ? styles.hide : styles.invalid}
           >
-            x
+            X
           </span>
         </label>
         <input
           type="text"
           id="email"
-          ref={emailRef}
           autoComplete="off"
           onChange={(event) => {
             setEmail(event.currentTarget.value);
           }}
           value={email}
           required
-          aria-invalid={isEmailValid ? 'false' : 'true'}
+          aria-invalid={emailIsValid ? 'false' : 'true'}
           aria-describedby="emailnote"
-          onFocus={() => setIsEmailFocus(true)}
-          onBlur={() => setIsEmailFocus(false)}
+          onFocus={() => setEmailIsFocus(true)}
+          onBlur={() => setEmailIsFocus(false)}
         />
         <p
           id="emailnote"
           className={
-            isEmailFocus && email && !isEmailValid
+            emailIsFocus && email && !emailIsValid
               ? styles.instructions
               : styles.offscreen
           }
@@ -121,15 +110,15 @@ export const RegisterPage: React.FC = () => {
         </p>
         <label className={styles.label} htmlFor="password">
           Password:
-          <span className={isPasswordValid ? styles.valid : styles.hide}>
-            v
+          <span className={passwordIsValid ? styles.valid : styles.hide}>
+            V
           </span>
           <span
             className={
-              isPasswordValid || !password ? styles.hide : styles.invalid
+              passwordIsValid || !password ? styles.hide : styles.invalid
             }
           >
-            x
+            X
           </span>
         </label>
         <input
@@ -140,15 +129,15 @@ export const RegisterPage: React.FC = () => {
           }}
           value={password}
           required
-          aria-invalid={isPasswordValid ? 'false' : 'true'}
+          aria-invalid={passwordIsValid ? 'false' : 'true'}
           aria-describedby="pwdnote"
-          onFocus={() => setIsPasswordFocus(true)}
-          onBlur={() => setIsPasswordFocus(false)}
+          onFocus={() => setPasswordIsFocus(true)}
+          onBlur={() => setPasswordIsFocus(false)}
         />
         <p
           id="pwdnote"
           className={
-            isPasswordFocus && password && !isPasswordValid
+            passwordIsFocus && password && !passwordIsValid
               ? styles.instructions
               : styles.offscreen
           }
@@ -169,17 +158,17 @@ export const RegisterPage: React.FC = () => {
           Confirm Password:
           <span
             className={
-              isMatchValid && matchPassword ? styles.valid : styles.hide
+              matchIsValid && matchPassword ? styles.valid : styles.hide
             }
           >
-            v
+            V
           </span>
           <span
             className={
-              isMatchValid || !matchPassword ? styles.hide : styles.invalid
+              matchIsValid || !matchPassword ? styles.hide : styles.invalid
             }
           >
-            x
+            X
           </span>
         </label>
         <input
@@ -190,24 +179,25 @@ export const RegisterPage: React.FC = () => {
           }}
           value={matchPassword}
           required
-          aria-invalid={isMatchValid ? 'false' : 'true'}
+          aria-invalid={matchIsValid ? 'false' : 'true'}
           aria-describedby="confirmnote"
-          onFocus={() => setIsMatchFocus(true)}
-          onBlur={() => setIsMatchFocus(false)}
+          onFocus={() => setMatchIsFocus(true)}
+          onBlur={() => setMatchIsFocus(false)}
         />
         <p
           id="confirmnote"
           className={
-            isMatchFocus && !isMatchValid
+            matchIsFocus && !matchIsValid
               ? styles.instructions
               : styles.offscreen
           }
         >
           Must match the first password input field.
         </p>
-        <button className={styles.submitButton}
+        <button
+          className={styles.submitButton}
           disabled={
-            !isEmailValid || !isPasswordValid || !isMatchValid ? true : false
+            !emailIsValid || !passwordIsValid || !matchIsValid ? true : false
           }
         >
           Register

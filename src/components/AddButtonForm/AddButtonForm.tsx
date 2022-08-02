@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux.hooks';
 import {
   addButton,
@@ -6,12 +6,14 @@ import {
   thunkUpdateChannelById,
 } from '../../store/currentChannels/currentChannels.slice';
 import { Button, Channel } from '../../store/currentChannels/types';
+import { Restrictions } from '../../types/types';
 
 interface Props {
   index: number;
   isInlineButton: boolean;
   setButtons: React.Dispatch<React.SetStateAction<Button[]>>;
   campaignId: string;
+  restrictions: Restrictions;
 }
 
 export const AddButtonForm: React.FC<Props> = ({
@@ -19,6 +21,7 @@ export const AddButtonForm: React.FC<Props> = ({
   isInlineButton,
   setButtons,
   campaignId,
+  restrictions,
 }) => {
   const dispatch = useAppDispatch();
 
@@ -26,11 +29,24 @@ export const AddButtonForm: React.FC<Props> = ({
 
   const [isLinkButton, setIsLinkButton] = useState(false);
   const [text, setText] = useState('');
+  const [textIsValid, setTextIsValid] = useState(true);
   const [link, setLink] = useState('');
 
   const buttons = useAppSelector(
     (state) => state.currentChannels.channels[index].buttons
   );
+
+  const linkInlineButtons = currentChannelsState.channels[index].buttons.filter(
+    (btn) => btn.isLinkButton && btn.isInlineButton
+  );
+
+  const whatsupLinkSupported = linkInlineButtons.length < 1;
+
+  const linksIsSupported =
+    (currentChannelsState.channels[index].isInlineKeyboard &&
+      restrictions.inlineLinksIsSupported) ||
+    (!currentChannelsState.channels[index].isInlineKeyboard &&
+      restrictions.standardLinksIsSupported);
 
   const handleIsLinkButton = () => {
     setIsLinkButton(!isLinkButton);
@@ -64,21 +80,44 @@ export const AddButtonForm: React.FC<Props> = ({
     await dispatch(thunkFetchAllByCampaignId(campaignId));
   };
 
-  const handleSetButton = () => {
-    setButtons(buttons);
-  };
+  useEffect(() => {
+    const isValid =
+      (isInlineButton &&
+        text.length <= restrictions.inlineMaxButtonTextLength) ||
+      (isInlineButton && restrictions.inlineMaxButtonTextLength === -1) ||
+      (!isInlineButton &&
+        text.length <= restrictions.standardMaxButtonTextLength) ||
+      (!isInlineButton && restrictions.standardMaxButtonTextLength === -1);
+
+    setTextIsValid(isValid);
+  }, [text, isInlineButton]);
 
   return (
     <div>
       <h2>Create Button</h2>
-      <div>
-        Link button{' '}
-        <input
-          type="checkbox"
-          checked={isLinkButton}
-          onChange={handleIsLinkButton}
-        />
-      </div>
+      {currentChannelsState.channels[index].type !== 'whatsup' &&
+        linksIsSupported && (
+          <div>
+            Link button{' '}
+            <input
+              type="checkbox"
+              checked={isLinkButton}
+              onChange={handleIsLinkButton}
+            />
+          </div>
+        )}
+      {currentChannelsState.channels[index].type === 'whatsup' &&
+        whatsupLinkSupported &&
+        linksIsSupported && (
+          <div>
+            Link button{' '}
+            <input
+              type="checkbox"
+              checked={isLinkButton}
+              onChange={handleIsLinkButton}
+            />
+          </div>
+        )}
       <div>
         <div>Text:</div>
         <input
@@ -98,8 +137,9 @@ export const AddButtonForm: React.FC<Props> = ({
         </div>
       )}
       <br />
-      <button onClick={handleCreateButton}>Create</button>
-      {/* <button onClick={handleSetButton}>Set</button> */}
+      <button onClick={handleCreateButton} disabled={!textIsValid}>
+        Create
+      </button>
     </div>
   );
 };
