@@ -85,7 +85,10 @@ export const ChannelsPage: React.FC = () => {
     <Loader />
   ) : campaign ? (
     <div className={styles.container}>
-      <h1>{campaign.name}</h1>
+      <div className={styles.header}>
+        <button onClick={handleGoBack}>Go Back</button>
+        <h1>{campaign.name}</h1>
+      </div>
 
       <div className={styles.channels}>
         <ChannelItem
