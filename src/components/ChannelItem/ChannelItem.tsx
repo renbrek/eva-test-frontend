@@ -21,6 +21,8 @@ export const ChannelItem: React.FC<Props> = ({ channel }) => {
 
   const [index, setIndex] = useState<number | null>(null);
 
+  const [maxMessageLength, setMaxMessageLength] = useState<number>();
+
   const [message, setMessage] = useState(channel.text);
   const [isActive, setIsActive] = useState(channel.isActive);
   const [isInlineKeyboard, setIsInlineKeyboard] = useState(
@@ -45,11 +47,23 @@ export const ChannelItem: React.FC<Props> = ({ channel }) => {
   };
 
   useEffect(() => {
-    if (channel.type === 'whatsup') setIndex(0);
-    if (channel.type === 'vk') setIndex(1);
-    if (channel.type === 'telegram') setIndex(2);
-    if (channel.type === 'sms') setIndex(3);
-  }, [channel]);
+    if (channel.type === 'whatsup') {
+      setIndex(0);
+      setMaxMessageLength(1000);
+    }
+    if (channel.type === 'vk') {
+      setIndex(1);
+      setMaxMessageLength(4096);
+    }
+    if (channel.type === 'telegram') {
+      setIndex(2);
+      setMaxMessageLength(4096);
+    }
+    if (channel.type === 'sms') {
+      setIndex(3);
+      setMaxMessageLength(undefined);
+    }
+  }, [channel.type]);
 
   useEffect(() => {
     if (index) {
@@ -65,9 +79,9 @@ export const ChannelItem: React.FC<Props> = ({ channel }) => {
         }
       >
         <div className={styles.header}>
-          <h1>{channel.type}</h1>
+          <h2>{channel.type}</h2>
           <div>
-            {isActive ? <>active</> : <>disable</>}{' '} 
+            {isActive ? <>active</> : <>disable</>}{' '}
             <input
               type={'checkbox'}
               checked={isActive}
@@ -84,6 +98,8 @@ export const ChannelItem: React.FC<Props> = ({ channel }) => {
               setMessage(event.currentTarget.value);
             }}
           ></textarea>
+          {message.length}
+          {maxMessageLength && `/${maxMessageLength}`}
         </div>
 
         <div>

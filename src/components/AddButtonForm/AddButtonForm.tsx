@@ -5,7 +5,7 @@ import {
   thunkFetchAllByCampaignId,
   thunkUpdateChannelById,
 } from '../../store/currentChannels/currentChannels.slice';
-import { Button } from '../../store/currentChannels/types';
+import { Button, Channel } from '../../store/currentChannels/types';
 
 interface Props {
   index: number;
@@ -38,7 +38,9 @@ export const AddButtonForm: React.FC<Props> = ({
 
   const handleCreateButton = async () => {
     if (isLinkButton) {
-      const channel = structuredClone(currentChannelsState.channels[index]);
+      const channel: Channel = structuredClone(
+        currentChannelsState.channels[index]
+      );
       channel.buttons.push({
         text,
         isInlineButton,
@@ -48,18 +50,16 @@ export const AddButtonForm: React.FC<Props> = ({
       await dispatch(thunkUpdateChannelById(channel));
     }
     if (!isLinkButton) {
-      const chnnel = structuredClone(currentChannelsState.channels[index]);
-      chnnel.buttons.push({
+      const channel: Channel = structuredClone(
+        currentChannelsState.channels[index]
+      );
+      channel.buttons.push({
         text,
         isInlineButton,
         isLinkButton,
       });
-      await dispatch(thunkUpdateChannelById(chnnel));
+      await dispatch(thunkUpdateChannelById(channel));
     }
-
-    await dispatch(
-      thunkUpdateChannelById(currentChannelsState.channels[index])
-    );
 
     await dispatch(thunkFetchAllByCampaignId(campaignId));
   };

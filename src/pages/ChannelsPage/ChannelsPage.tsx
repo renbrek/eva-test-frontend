@@ -8,7 +8,6 @@ import {
   thunkFetchAllByCampaignId,
   thunkUpdateChannelById,
 } from '../../store/currentChannels/currentChannels.slice';
-import { Button } from '../../store/currentChannels/types';
 
 import styles from './ChannelsPage.module.scss';
 
@@ -74,17 +73,11 @@ export const ChannelsPage: React.FC = () => {
     }
   }, [currentChannelsState.thunks.fetchAllByCampaignId.status]);
 
-  useEffect(() => {
-    console.log(
-      `text UF: ${currentChannelsState.channels[ChannelTypes.vk].text}`
-    );
-  });
-
   return isLoading ? (
     <Loader />
   ) : campaign ? (
     <div className={styles.container}>
-      <div>ChannelsPage:{campaignId}</div>
+      <h1>{campaign.name}</h1>
 
       <div className={styles.channels}>
         <ChannelItem

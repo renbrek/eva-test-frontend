@@ -1,0 +1,10 @@
+@import 'node_modules/nord/src/sass/nord.scss';
+
+.danger {
+  background-color: $nord11;
+}
+
+.buttons {
+  display: flex;
+  justify-content: space-between;
+}
