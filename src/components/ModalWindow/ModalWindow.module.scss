@@ -25,10 +25,25 @@
   border-radius: 1rem;
   background-color: $nord3;
 
+  display: flex;
+  flex-direction: column;
+
+  align-items: flex-end;
+
   transform: scale(0.5);
   transition: 0.3s;
 }
 
 .content.active {
   transform: scale(1);
+}
+
+.closeButton {
+  cursor: pointer;
+  opacity: 0.8;
+  transition: 0.3s;
+}
+
+.closeButton:hover {
+  opacity: 1;
 }

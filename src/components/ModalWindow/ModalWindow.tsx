@@ -34,6 +34,9 @@ export const ModalWindow: React.FC<PropsWithChildren<Props>> = ({
           event.stopPropagation();
         }}
       >
+        <div className={styles.closeButton} onClick={() => setActive(false)}>
+          X
+        </div>
         {children}
       </div>
     </div>
